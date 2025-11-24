@@ -17,33 +17,21 @@ module.exports = defineConfig({
       ssl: false,
       sslmode: "disable",
     },
-    workerMode: process.env.WORKER_MODE as
-    | "shared"
-    | "worker"
-    | "server",
+    workerMode: process.env.MEDUSA_WORKER_MODE as | "shared" | "worker" | "server",
     redisUrl: process.env.REDIS_URL,
   },
 
   admin: {
     disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
-    backendUrl: process.env.ADMIN_BACKEND_URL,
+    backendUrl: process.env.MEDUSA_BACKEND_URL,
   },
 
 
   modules: [
     {
-      resolve: "@medusajs/medusa/caching",
+      resolve: "@medusajs/medusa/cache-redis",
       options: {
-        providers: [
-          {
-            resolve: "@medusajs/caching-redis",
-            id: "caching-redis",
-            is_default: true,
-            options: {
-              redisUrl: process.env.CACHE_REDIS_URL,
-            },
-          },
-        ],
+        redisUrl: process.env.REDIS_URL,
       },
     },
     {
@@ -60,20 +48,5 @@ module.exports = defineConfig({
         },
       },
     },
-    {
-      resolve: "@medusajs/medusa/locking",
-      options: {
-        providers: [
-          {
-            resolve: "@medusajs/medusa/locking-redis",
-            id: "locking-redis",
-            is_default: true,
-            options: {
-              redisUrl: process.env.LOCKING_REDIS_URL,
-            },
-          },
-        ],
-      },
-    },
-  ]
+  ],
 })
