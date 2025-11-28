@@ -22,17 +22,21 @@
     "test:unit": "TEST_TYPE=unit NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
     "docker:up": "docker compose up --build -d",
     "docker:down": "docker compose down",
-    "predeploy": "medusa db:migrate"
+    "predeploy": "medusa db:migrate",
+    "dev:email": "email dev --dir ./src/modules/resend/emails"
   },
   "dependencies": {
     "@medusajs/admin-sdk": "2.11.3",
     "@medusajs/cli": "2.11.3",
     "@medusajs/framework": "2.11.3",
     "@medusajs/medusa": "2.11.3",
-    "medusa-payment-manual": "^1.0.25"
+    "@react-email/components": "1.0.1",
+    "medusa-payment-manual": "^1.0.25",
+    "resend": "^6.5.2"
   },
   "devDependencies": {
     "@medusajs/test-utils": "2.11.3",
+    "@react-email/preview-server": "^5.0.5",
     "@swc/core": "^1.7.28",
     "@swc/jest": "^0.2.36",
     "@types/jest": "^29.5.13",
@@ -43,6 +47,7 @@
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-email": "^5.0.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.2",
     "vite": "^5.4.14",
