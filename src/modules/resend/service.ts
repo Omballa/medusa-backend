@@ -44,6 +44,7 @@ class ResendNotificationProviderService extends AbstractNotificationProviderServ
         this.resendClient = new Resend(options.api_key)
         this.options = options
         this.logger = logger
+        console.log("ResendNotificationProviderService initialized with options:", options);
     }
 
     static validateOptions(options: Record<any, any>) {

@@ -8,6 +8,7 @@ export default async function orderPlacedHandler({
   event: { data },
   container,
 }: SubscriberArgs<{ id: string }>) {
+  console.log("Order placed event received with data:", data);
   await sendOrderConfirmationWorkflow(container)
     .run({
       input: {

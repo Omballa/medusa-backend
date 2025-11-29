@@ -32,6 +32,7 @@
     "@medusajs/medusa": "2.11.3",
     "@react-email/components": "1.0.1",
     "medusa-payment-manual": "^1.0.25",
+    "node-telegram-bot-api": "^0.66.0",
     "resend": "^6.5.2"
   },
   "devDependencies": {
