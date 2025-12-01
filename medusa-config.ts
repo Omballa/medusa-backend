@@ -71,16 +71,21 @@ module.exports = defineConfig({
         ],      
       },
     },
-    // {
-    //   resolve: "@medusajs/medusa/notification",
-    // },
     {
-      resolve: "./src/modules/resend",
-      options: {
-        channels: ["email"],
-        api_key: process.env.RESEND_API_KEY,
-        from: process.env.RESEND_FROM_EMAIL,
-      },
+    resolve: "@medusajs/medusa/notification",  // ← Core notification module (REQUIRED for custom providers)
+    options: {
+      providers: [  // ← Your custom Resend goes HERE, as a sub-provider
+        {
+          resolve: "./src/modules/resend",  // ← Path to your module
+          id: "resend",  // ← Matches what your subscriber calls
+          options: {
+            channels: ["email"],  // ← Enables email channel
+            api_key: process.env.RESEND_API_KEY,
+            from: process.env.RESEND_FROM_EMAIL,
+          },
+        },
+      ],
     },
+  },
   ],
 })
