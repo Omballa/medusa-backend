@@ -7,6 +7,7 @@ import {
 import { 
   Resend, CreateEmailOptions
 } from "resend"
+import { orderPlacedEmail } from "./emails/order-placed"
 
 type ResendOptions = {
   api_key: string
@@ -26,7 +27,7 @@ enum Templates {
 }
 
 const templates: {[key in Templates]?: (props: unknown) => React.ReactNode} = {
-  // TODO add templates
+  [Templates.ORDER_PLACED]: orderPlacedEmail,
 }
 
 
