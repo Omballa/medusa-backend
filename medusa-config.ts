@@ -84,6 +84,15 @@ module.exports = defineConfig({
             from: process.env.RESEND_FROM_EMAIL,
           },
         },
+        {
+          resolve: "./src/modules/telegram",  // ← Path to your module
+          id: "telegram",  // ← Matches what your subscriber calls
+          options: {
+            channels: ["messaging"],  // ← Enables messaging channel
+            bot_token: process.env.TELEGRAM_BOT_TOKEN,
+            chat_id: process.env.TELEGRAM_CHAT_ID,
+          },
+        },
       ],
     },
   },

@@ -45,14 +45,22 @@ export const sendOrderConfirmationWorkflow = createWorkflow(
     
     const notification = when({ orders }, (data) => !!data.orders[0].email)
     .then(() => {
-      return sendNotificationStep([{
-        to: orders[0].email!,
-        channel: "email",
-        template: "order-placed",
-        data: {
-          order: orders[0],
+      return sendNotificationStep([
+        {
+          to: orders[0].email!,
+          channel: "email",
+          template: "order-placed",
+          data: {
+            order: orders[0],
+          },
         },
-      }])
+        {
+          to: "telegram", // Dummy value; actual recipient is defined in module options
+          channel: "messaging", // Matches Telegram's channel
+          template: "order-placed",
+          data: { order: orders[0] },
+        },
+      ])
     })
 
     return new WorkflowResponse({

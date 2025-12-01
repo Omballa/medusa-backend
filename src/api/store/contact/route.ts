@@ -11,59 +11,36 @@ export async function POST(req, res) {
       });
     }
 
-    // Your Telegram bot credentials
-    const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-    const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+    // Resolve Medusa's notification service from the request scope
+    const notificationService = req.scope.resolve("notificationService")
 
-    if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
-      console.error("Telegram credentials not configured");
-      return res.status(500).json({
-        success: false,
-        error: "Server configuration error",
-      });
-    }
-
-    // Format the message for Telegram
-    const telegramMessage = `
-🔔 *New Contact Form Submission*
-
-👤 *Name:* ${name}
-📧 *Email:* ${email}
-${phone ? `📱 *Phone:* ${phone}` : ""}
-
-💬 *Message:*
-${message}
-    `.trim();
-
-    // Send to Telegram
-    const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-    
-    const response = await fetch(telegramUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    // Send the notification using your existing Telegram provider + template
+    await notificationService.sendNotification({
+      template: "contact-us",
+      channel: "messaging",           // matches what you set in medusa-config.ts
+      to: "telegram",                 // dummy value — required by Medusa, ignored by our provider
+      data: {
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone?.trim(),
+        message: message.trim(),
       },
-      body: JSON.stringify({
-        chat_id: TELEGRAM_CHAT_ID,
-        text: telegramMessage,
-        parse_mode: "Markdown",
-      }),
-    });
+    })
 
-    const telegramData = await response.json();
+    // Optional: also send an email to yourself via Resend (uncomment when ready)
+    // await notificationService.sendNotification({
+    //   template: "contact-us-admin",
+    //   channel: "email",
+    //   to: "admin@yourstore.com",
+    //   data: { name, email, phone, subject, message },
+    // })
 
-    if (!response.ok) {
-      console.error("Telegram API error:", telegramData);
-      return res.status(500).json({
-        success: false,
-        error: "Failed to send notification",
-      });
-    }
-
-    return res.status(200).json({
+    return res.json({
       success: true,
-      message: "Contact form submitted successfully",
-    });
+      message: "Thank you! Your message has been sent.",
+    })
+
+    
   } catch (error) {
     console.error("Error processing contact form:", error);
     return res.status(500).json({
