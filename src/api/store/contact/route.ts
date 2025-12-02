@@ -1,3 +1,6 @@
+// src/api/store/contact/route.ts
+import { sendContactNotificationWorkflow } from "../../../workflows/send-contact-notification";
+
 export async function POST(req, res) {
   try {
     console.log("Request body:", req.body);
@@ -11,15 +14,8 @@ export async function POST(req, res) {
       });
     }
 
-    // Resolve Medusa's notification service from the request scope
-    const notificationService = req.scope.resolve("notificationService")
-
-    // Send the notification using your existing Telegram provider + template
-    await notificationService.sendNotification({
-      template: "contact-us",
-      channel: "messaging",           // matches what you set in medusa-config.ts
-      to: "telegram",                 // dummy value — required by Medusa, ignored by our provider
-      data: {
+    await sendContactNotificationWorkflow().run({
+      input: {
         name: name.trim(),
         email: email.trim(),
         phone: phone?.trim(),
