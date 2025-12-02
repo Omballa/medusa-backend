@@ -6,14 +6,13 @@ type ContactInput = {
   name: string
   email: string
   phone?: string
-  subject?: string
   message: string
 }
 
 export const sendContactNotificationWorkflow = createWorkflow(
   "send-contact-notification",
   function (input: ContactInput) {
-    const { name, email, phone, subject, message } = input
+    const { name, email, phone, message } = input
 
     // This step sends the notification(s) — it gets "called" automatically
     sendNotificationsStep([{
@@ -22,11 +21,10 @@ export const sendContactNotificationWorkflow = createWorkflow(
       channel: "messaging",
       template: "contact-us",
       data: {
-        name: name.trim(),
-        email: email.trim(),
-        phone: phone?.trim(),
-        subject: subject?.trim(),
-        message: message.trim(),
+        name: name,
+        email: email,
+        phone: phone,
+        message: message,
       },
     }])
 

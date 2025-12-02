@@ -16,10 +16,10 @@ export async function POST(req, res) {
 
     await sendContactNotificationWorkflow().run({
       input: {
-        name: name,
-        email: email,
-        phone: phone,
-        message: message,
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone?.trim(),
+        message: message.trim(),
       },
     })
 
