@@ -1,14 +1,25 @@
-import type { SubscriberArgs, SubscriberConfig } from '@medusajs/framework'
-import { ProductEvents } from '@medusajs/framework/utils'
-import { MeiliSearchService } from '@rokmohar/medusa-plugin-meilisearch'
+import {
+  SubscriberArgs,
+  type SubscriberConfig,
+} from "@medusajs/framework"
+import { deleteProductsFromMeilisearchWorkflow } from "../workflows/delete-products-from-meilisearch"
 
-export default async function productDeleteHandler({ event: { data }, container }: SubscriberArgs<{ id: string }>) {
-    const productId = data.id
+export default async function productDeleteHandler({ 
+  event: { data },
+  container,
+}: SubscriberArgs<{ id: string }>) {
+  const logger = container.resolve("logger")
+  
+  logger.info(`Deleting product ${data.id} from Meilisearch`)
 
-    const meiliSearchService: MeiliSearchService = container.resolve('meilisearch')
-    await meiliSearchService.deleteDocument('products', productId)
+  await deleteProductsFromMeilisearchWorkflow(container)
+    .run({
+      input: {
+        ids: [data.id],
+      },
+    })
 }
 
 export const config: SubscriberConfig = {
-    event: ProductEvents.PRODUCT_DELETED
+  event: "product.deleted",
 }
