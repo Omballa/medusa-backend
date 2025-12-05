@@ -27,22 +27,50 @@ export const syncProductsStep = createStep(
     const meilisearchModuleService = container.resolve<MeilisearchModuleService>(
       MEILISEARCH_MODULE
     )
-    const existingProducts = await meilisearchModuleService.retrieveFromIndex(
-      products.map((product) => product.id),
-      "product"
-    )
-    const newProducts = products.filter((product) => !existingProducts.some(
-      (p) => p.id === product.id)
-    )
-    await meilisearchModuleService.indexData(
-      products as unknown as Record<string, unknown>[], 
-      "product"
-    )
 
-    return new StepResponse(undefined, {
-      newProducts: newProducts.map((product) => product.id),
-      existingProducts,
-    })
+    try {
+        const plainDocuments = products.map((p) => ({
+            id: p.id,
+            title: p.title ?? "",
+            description: p.description ?? "",
+            handle: p.handle,
+            thumbnail: p.thumbnail ?? null,
+            category_ids: p.categories.map((c) => c.id),
+            category_names: p.categories.map((c) => c.name),
+            category_handles: p.categories.map((c) => c.handle),
+            tags: p.tags.map((t) => t.value),
+        }))
+
+        console.log(`Indexing ${plainDocuments.length} products into MeiliSearch...`)
+        
+        const existingProducts = await meilisearchModuleService.retrieveFromIndex(
+            plainDocuments.map((d) => d.id),
+            "product"
+        )
+
+        const existingIds = new Set(existingProducts.map((e: any) => e.id))
+        const newProducts = plainDocuments.filter((d) => !existingIds.has(d.id))
+
+        
+        await meilisearchModuleService.indexData(
+            plainDocuments as unknown as Record<string, unknown>[], 
+            "product"
+        )
+
+        console.log(`Indexed ${plainDocuments.length} products (${newProducts.length} new)`)
+
+        return new StepResponse(undefined, {
+            newProducts: newProducts.map((product) => product.id),
+            existingProducts,
+        })
+    }
+    catch (error) {
+        console.error("syncProductsStep FAILED:", error)
+        console.error("First product sample:", products[0])
+        throw error // re-throw so the workflow fails loudly
+    }
+    
+    
   },
 
   async (input, { container }) => {
