@@ -1,5 +1,4 @@
 import { loadEnv, defineConfig } from '@medusajs/framework/utils'
-import type { MeilisearchPluginOptions } from '@rokmohar/medusa-plugin-meilisearch'
 
 loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 
