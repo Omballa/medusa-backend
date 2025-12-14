@@ -70,6 +70,7 @@ Once Meilisearch is running (default endpoint: `http://localhost:7700`):
 MEILISEARCH_HOST=http://localhost:7700
 MEILISEARCH_API_KEY=your_default_admin_api_key_here
 MEILISEARCH_PRODUCT_INDEX_NAME=products
+```
 
 ### Setting up Telegram Bot and Resend for Notifications
 
